@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+
+<head>
+	
+	<title>Surprizer</title>
+	
+    <link rel="stylesheet" type="text/css" href="style.css">
+
+</head>
+
+<body>
+    <div id="stripe"></div>
+	<div id="header">
+       <h1 class="logo">
+        SURPRIZER
+       </h1>
+	</div>
+    <div id="main">
+        <div id="content-box">
+            <span class="content-text">Register for Surprizer</span>
+            <form action="register.do" method="post" accept-charset="utf-8">
+                <input class="input" type="text" placeholder="name" name="name" />
+                <input class="input" type="text" placeholder="email" name="email" />
+                <input class="input" type="password" placeholder="password" name="password"/>
+                <input class="input" type="password" placeholder="confirm password" name="passwordconfirm"/>
+                <p><input type="submit" value="Register"></p>
+            </form>
+            <span class="content-text">Need an account? &nbsp; <a href="register">Register</a></span>
+        </div>
+    </div>
+
+    <div id="footer">
+        
+    </div>
+
+</body>
+</html>
