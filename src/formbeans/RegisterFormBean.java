@@ -2,7 +2,9 @@ package formbeans;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Pattern;
 
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.mybeans.form.FormBean;
 
 public class RegisterFormBean extends FormBean {
@@ -16,14 +18,17 @@ public class RegisterFormBean extends FormBean {
 	public String getPassword()  { return password;  }
 	public String getPasswordConfirm()   { return passwordConfirm;   }
 	
-	public void setName(String s) { name = s.trim(); }
-	public void setEmail(String s) { email = s.trim();  }
-	public void setPassword(String s)  { password = s.trim();  }
-	public void setPasswordConfirm(String s) { passwordConfirm = s.trim(); }
+	public void setName(String s) { name = StringEscapeUtils.escapeHtml4(s.trim()); }
+	public void setEmail(String s) { email = StringEscapeUtils.escapeHtml4(s.trim());  }
+	public void setPassword(String s)  { password = StringEscapeUtils.escapeHtml4(s.trim());  }
+	public void setPasswordConfirm(String s) { passwordConfirm = StringEscapeUtils.escapeHtml4(s.trim()); }
 	
 	public List<String> getValidationErrors() {
 		List<String> errors = new ArrayList<String>();
-
+		
+		//Another email-checking regex
+		Pattern regex = Pattern.compile("\\b[\\w.%-]+@[-.\\w]+\\.[A-Za-z]{2,4}\\b");
+		
 		if (name == null || name.length() == 0) {
 			errors.add("Name is required");
 		}
@@ -37,9 +42,13 @@ public class RegisterFormBean extends FormBean {
 		}
 
 		if (passwordConfirm == null || passwordConfirm.length() == 0) {
-			errors.add("Confirm Password is required");
+			errors.add("Confirmation Password is required");
 		}
 		
+		if (!regex.matcher(email).matches()) {
+			errors.add("Invalid email address.");
+		}
+
 		if (errors.size() > 0) {
 			return errors;
 		}
@@ -47,7 +56,6 @@ public class RegisterFormBean extends FormBean {
 		if (!password.equals(passwordConfirm)) {
 			errors.add("Passwords are not the same");
 		}
-		
 		return errors;
 	}
 	

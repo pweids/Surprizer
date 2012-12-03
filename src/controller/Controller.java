@@ -38,6 +38,20 @@ public class Controller extends HttpServlet {
 		
 		Action.add(new YourListsAction(model));
 		Action.add(new NewListAction(model));
+		Action.add(new EditListAction(model));
+		Action.add(new DeleteListAction(model));
+		Action.add(new FollowListAction(model));
+		Action.add(new UnfollowListAction(model));
+		Action.add(new SearchListAction(model));
+		
+		Action.add(new ViewListAction(model));
+		
+		Action.add(new NewItemAction(model));
+		Action.add(new EditItemAction(model));
+		Action.add(new DeleteItemAction(model));
+		Action.add(new MarkItemAction(model));
+		Action.add(new UnmarkItemAction(model));
+		
 	}
 
 	public void doPost(HttpServletRequest request, HttpServletResponse response)

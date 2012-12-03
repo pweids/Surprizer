@@ -44,26 +44,38 @@ public class VerifyEmailAction extends Action {
 		List<String> errors = new ArrayList<String>();
 		request.setAttribute("errors", errors);
 
-		request.setAttribute("title", "Suprizer Account Verification");
+		request.setAttribute("title", "Surprizer - Account Verification");
 		
-		if(user.isVerified())
-			return request.getContextPath() + "/yourLists.do";
+		String email = request.getParameter("email");
+		if(email != null){
+			try {
+				user = userDAO.lookup(email);
+			} catch (DAOException e) {
+				errors.add(e.getMessage());
+			}
+			System.out.println("Session user is null, check parameter.");
+			
+		}
+		else System.out.println("email is nukk.");
+		if(user==null) System.out.println("user is null.");
+			if(user.isEmailVerified()){
+				if(request.getContextPath() == null) System.out.println("request is null");
+				return request.getContextPath() + "/yourLists.do";
+			}
+			String subject = "Thank you for registering on Surprizer";
+			String message = "Click the following link to verify your account <br />" +
+							 "<form action=\"http://localhost:8080/Surprizer/verifyEmail.do\" method=POST>" + 
+							 "	<input type=\"hidden\" name=\"email\" value =\""+ user.getEmail() + "\" >" +
+							 "	<input type=\"hidden\" name=\"verify\" value =\""+ user.getVerified() + "\" >" +
+							 "	<input type=\"submit\" value=\"Verify your Email\" />" + 	
+							 "</form>";
 		
-		String subject = "Thank you for registering on Suprizer";
-		String message = "Click the following link to verify your account <br />" +
-						 "<form action=\"localhost:8080/Suprizer/verifyEmail.do\" method=POST>" + 
-						 "	<input type=\"hidden\" name=\"email\" value =\""+ user.getEmail() + "\" >" +
-						 "	<input type=\"hidden\" name=\"verify\" value =\""+ user.getVerified() + "\" >" +
-						 "	<input type=\"submit\" value=\"Verify your Email\" />" + 	
-						 "</form>";
-		//TODO ADDRESS OF SITE
-		
+	
 		// If the verify param was not passed, send the verification email 
 		// and return to the verify page
 		String verification = request.getParameter("verify");
 		if (verification == null) {
-			SendMail sendMail = new SendMail("verify@suprizer.com", user.getEmail(), subject, message);
-	        sendMail.send();
+			 SendMail.send("verify@surprizer.com", user.getEmail(), subject, message);
 			return "page-verifyEmail.jsp";
 		}
 

@@ -12,7 +12,7 @@ import databeans.User;
 
 public class UserDAO {
     private BeanFactory<User> factory;
-    private String tableName = "suprizer_users";
+    private String tableName = "surprizer_users";
     private String PRIMARY_KEY = "userId";
 
     public UserDAO()  throws DAOException {
@@ -28,7 +28,7 @@ public class UserDAO {
         }
     }
     
-	public int create(User user) throws DAOException {
+	public User create(User user) throws DAOException {
 		User newUser = null;
         try {
         	Transaction.begin();
@@ -36,14 +36,15 @@ public class UserDAO {
         	if(results.length > 0)
     			throw new DAOException("Email Address " + user.getEmail() + " already registered");
         	newUser = factory.create();
-			factory.copyInto(user,newUser);
-			Transaction.commit();
+        	factory.copyInto(user,newUser);
+			
+        	Transaction.commit();
 		} catch (RollbackException e) {
 			throw new DAOException(e);
 		} finally {
 			if (Transaction.isActive()) Transaction.rollback();
 		}
-        return newUser.getUserId();
+        return newUser;
 	}
 	
     public User lookup(String email) throws DAOException {
@@ -59,7 +60,20 @@ public class UserDAO {
             throw new DAOException(e);
         }
     }
-
+    
+    public User [] lookupByNameOrEmail(String search) throws DAOException {
+        try {
+            User[] results = factory.match(MatchArg.or(MatchArg.contains("name",search), MatchArg.equals("email", search)));
+            if (results.length == 0) {
+                throw new DAOException("No user found with that email");
+            }
+            return results;
+        } catch (RollbackException e) {
+            throw new DAOException(e);
+        }
+    }
+    
+    
     public User modify(User modifiedUser) throws DAOException {
     	User[] results = null; 
     	try {

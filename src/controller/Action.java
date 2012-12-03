@@ -5,7 +5,7 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
-public abstract class Action {
+public abstract class Action{
     public abstract String getName();
 
     // Returns the name of the jsp used to render the output.

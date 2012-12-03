@@ -52,35 +52,29 @@ public class NewListAction extends Action {
 		}
 		request.setAttribute("form", form);
 		
-		request.setAttribute("title", "Suprizer Create New List");
+		request.setAttribute("title", "Surprizer - Create New List");
 		
 		// If no params were passed, return with no errors so that the form will
 		// be presented (we assume for the first time).
 		if (!form.isPresent()) {
-			return "page-newList.jsp";
+			return "mylists.jsp";
 		}
 
-		// Any validation errors?
-		errors.addAll(form.getValidationErrors());
-		if (errors.size() != 0) {
-			System.out.println("Validation Errors");
-			return "page-newList.jsp";
-		}
+		
 
 		// Create the new user bean
-		GiftList list = new GiftList(form.getListName(), form.getDescription(), user.getName(), form.getPrivacySetting());
-		int listId = 0;
+		GiftList list = new GiftList(form.getListName(), form.getDescription(), user.getUserId(), user.getName(), form.getPrivacySetting());
 		try {
-			listId = giftlistDAO.create(list);
-			list.setListId(listId);
+			list = giftlistDAO.create(list);
 		} catch (DAOException e) {
 			errors.add(e.getMessage());
 			System.out.println("db errors");
-			return "page-newList.jsp";
+			return "mylists.jsp";
 		}
 		System.out.println("new List created");
 				
 		return request.getContextPath() + "/yourLists.do";
+		
 	}
 	
 

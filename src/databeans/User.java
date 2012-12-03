@@ -16,14 +16,13 @@ public class User {
     public String getName() {  return name;  }
     public String getEmail() {  return email;  }
 	public String getPassword() {  return password;  }
-
 	public int getSalt() {  return salt;  }
 	public String getVerified() {  return verified;  }
 	
 	public void setUserId(int userId) {  this.userId = userId;  }
 	public void setName(String s) {  name = s; }
 	public void setEmail(String s) {  email = s; }
-	public void setPassword(String s) {password = s; }
+	public void setPassword(String s) { password = s; }
 	public void setSalt(int x) {  salt = x; }
 	public void setVerified(String s) {  verified = s; }
     
@@ -33,14 +32,14 @@ public class User {
     	name = n;
 		email = e;
 		password = hash(p);
-		verified = hash(email);
+		verified = hash(e);
     }
 	
 	public boolean checkPassword(String passwordAttempt) {
 		return password.equals(hash(passwordAttempt));
 		
 	}
-	public boolean isVerified(){
+	public boolean isEmailVerified(){
 		return verified.equals("Verified");
 	}
 

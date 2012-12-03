@@ -6,6 +6,8 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import model.GiftListDAO;
+import model.ItemDAO;
 import model.Model;
 import model.UserDAO;
 
@@ -20,9 +22,13 @@ public class EditUserAction extends Action {
 	private FormBeanFactory<EditUserFormBean> formBeanFactory = FormBeanFactory
 			.getInstance(EditUserFormBean.class);
 	private UserDAO userDAO;
-
+	private GiftListDAO listDAO;
+	private ItemDAO itemDAO;
+	
 	public EditUserAction(Model model) {
 		userDAO = model.getUserDAO();
+		listDAO = model.getGiftListDAO();
+		itemDAO = model.getItemDAO();
 	}
 
 	@Override
@@ -44,8 +50,8 @@ public class EditUserAction extends Action {
 			e1.printStackTrace();
 		}
 		request.setAttribute("form", form);
-		
-		request.setAttribute("title", "Edit Suprizer User");
+	
+		request.setAttribute("title", "Surprizer - Edit User");
 		
 		if (!form.isPresent()) {
 			return "page-editUser.jsp";
@@ -61,11 +67,13 @@ public class EditUserAction extends Action {
 		//current user
 		User currentUser = (User) session.getAttribute("user");
 		
-		// Look up the user
-		User modifiedUser = new User();
-		modifiedUser.setName(form.getName());
-		modifiedUser.setEmail(currentUser.getEmail());
-		modifiedUser.setPassword(form.getPassword());
+		// Modify the user
+		User modifiedUser = currentUser;
+		if(form.getName().length() > 0)
+			modifiedUser.setName(form.getName());
+		
+		if(form.getPassword() != null && form.getPassword().length() > 0 && modifiedUser.checkPassword(form.getPassword()) == false)
+			modifiedUser.setPassword(form.getPassword());
 		
 		try {
 			modifiedUser = userDAO.modify(modifiedUser);
@@ -74,6 +82,14 @@ public class EditUserAction extends Action {
 			System.out.println("DAO errors");
 			return "page-editUser.jsp";
 		}
+		try {
+			listDAO.modifyUserName(modifiedUser.getUserId(), modifiedUser.getName());
+		} catch (DAOException e) {
+			errors.add(e.getMessage());
+			System.out.println("DAO errors");
+			return "page-editUser.jsp";
+		}
+		
 
 		// Attach (this copy of) the user bean to the session
 		session.setAttribute("user", modifiedUser);

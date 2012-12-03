@@ -9,6 +9,8 @@ public class Model {
 
 	private UserDAO userDAO;
 	private GiftListDAO giftListDAO;
+	private ItemDAO itemDAO;
+	private UsersListsDAO usersListsDAO;
 	
 	public Model(ServletConfig config) throws ServletException {
 		String jdbcDriver   = config.getInitParameter("jdbcDriverName");
@@ -23,6 +25,10 @@ public class Model {
 		try {
 			userDAO    = new UserDAO();
 			giftListDAO	   = new GiftListDAO();
+			usersListsDAO = new UsersListsDAO();
+			itemDAO		= new ItemDAO();
+			
+			
 		} catch (DAOException e) {
 			e.printStackTrace();
 		}	
@@ -30,5 +36,7 @@ public class Model {
 	}	
     public UserDAO getUserDAO() {  return userDAO;  }
     public GiftListDAO getGiftListDAO() {  return giftListDAO;  }
+    public UsersListsDAO getUsersListsDAO() {  return usersListsDAO;  }
+    public ItemDAO getItemDAO() {  return itemDAO;  }
 
 }

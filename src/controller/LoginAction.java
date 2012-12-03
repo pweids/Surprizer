@@ -35,7 +35,15 @@ public class LoginAction extends Action {
 
 		List<String> errors = new ArrayList<String>();
 		request.setAttribute("errors", errors);
-
+		
+		HttpSession session = request.getSession();
+		
+		request.setAttribute("title", "Surprizer - Log In");
+		
+		//Is the user already logged in?
+		if (session.getAttribute("user") != null) {
+			return "yourLists.do";
+		}
 		LoginFormBean form = null;
 
 		try {
@@ -43,21 +51,22 @@ public class LoginAction extends Action {
 		} catch (FormBeanException e1) {
 			e1.printStackTrace();
 		}
-		request.setAttribute("form", form);
-		
-		request.setAttribute("title", "Suprizer Login");
 		
 		// If no params were passed, return with no errors so that the form will
 		// be presented (we assume for the first time).
 		if (!form.isPresent()) {
-			return "page-login.jsp";
+			return "index.jsp";
 		}
+		
+		request.setAttribute("form", form);
+		
+		
 
 		// Any validation errors?
 		errors.addAll(form.getValidationErrors());
 		if (errors.size() != 0) {
 			System.out.println("Validation Errors");
-			return "page-login.jsp";
+			return "index.jsp";
 		}
 
 		// Look up the user
@@ -67,20 +76,19 @@ public class LoginAction extends Action {
 		} catch (DAOException e) {
 			errors.add(e.getMessage());
 			System.out.println("DAO errors");
-			return "page-login.jsp";
+			return "index.jsp";
 		}
 		
 		// Check the password
 		if (user.checkPassword(form.getPassword()) == false) {
 			errors.add("Incorrect password");
-			return "page-login.jsp";
+			return "index.jsp";
 		}
 
 		// Attach (this copy of) the user bean to the session
-		HttpSession session = request.getSession();
 		session.setAttribute("user", user);
 
-		if(user.isVerified())
+		if(user.isEmailVerified())
 			return request.getContextPath() + "/yourLists.do";
 		else
 			return request.getContextPath() + "/yourLists.do";

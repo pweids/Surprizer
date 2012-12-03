@@ -34,41 +34,43 @@ public class RegisterAction extends Action {
 		List<String> errors = new ArrayList<String>();
 		request.setAttribute("errors", errors);
 		
+		request.setAttribute("title", "Surprizer - Registration");
+
+		
 		RegisterFormBean form = null;
 		try {
 			form = formBeanFactory.create(request);
 		} catch (FormBeanException e1) {
 			e1.printStackTrace();
 		}
-		request.setAttribute("form",form);
 		
-		request.setAttribute("title", "Register for Suprizer");
-		
+				
 		// If no params were passed, return with no errors so that the form will
 		// be presented (we assume for the first time).
 	    if (!form.isPresent()) {
 			System.out.println("new form");
-	        return "page-register.jsp";
+	        return "register.jsp";
 	    }
+	    
+	    request.setAttribute("form",form);
 
 		errors.addAll(form.getValidationErrors());
 		if (errors.size() != 0) {
 			System.out.println("validation errors");
-			return "page-register.jsp";
+			return "register.jsp";
 		}
+
 		
 		// Create the new user bean
 		User user = new User(form.getName(), form.getEmail(), form.getPassword());
-		int userId = 0;
 		try {
-			userId = userDAO.create(user);
-			user.setUserId(userId);
+			user = userDAO.create(user);
 		} catch (DAOException e) {
 			errors.add(e.getMessage());
 			System.out.println("db errors");
-			return "page-register.jsp";
+			return "register.jsp";
 		}
-		System.out.println("new user created");
+		System.out.println("new user " + user.getName() + " created");
 		HttpSession session = request.getSession();
 		session.setAttribute("user", user);
 		
